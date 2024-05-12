@@ -33,6 +33,18 @@ def receive_message(sock_udp):
             print(f"Error receiving message from server: {e}")
             break
 
+def send_message():
+    while True:
+        try:
+            message = input('input your message: ').encode('utf-8')
+            if message == "exit":
+                break
+            message_length = len(message)
+            sent = sock_udp.sendto(room_name_length.to_bytes(1, "big") + token_size.to_bytes(1, "big"), (server_address, udp_server_port))
+            sent = sock_udp.sendto(room_name.encode('utf-8') + token.encode('utf-8') + message , (server_address, udp_server_port))
+        except Exception as e:
+            print(e)
+
 
 try:
     sock_tcp.connect((server_address, tcp_server_port))
@@ -65,17 +77,6 @@ try:
 finally:
     sock_tcp.close()
 
-def send_message():
-    while True:
-        try:
-            message = input('input your message: ').encode('utf-8')
-            if message == "exit":
-                break
-            message_length = len(message)
-            sent = sock_udp.sendto(room_name_length.to_bytes(1, "big") + token_size.to_bytes(1, "big"), (server_address, udp_server_port))
-            sent = sock_udp.sendto(room_name.encode('utf-8') + token.encode('utf-8') + message , (server_address, udp_server_port))
-        except Exception as e:
-            print(e)
 
 receive_message_thread = threading.Thread(target=receive_message, args=(sock_udp,))
 receive_message_thread.start()
